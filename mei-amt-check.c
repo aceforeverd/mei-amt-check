@@ -82,6 +82,8 @@
  * Intel Management Engine Interface
  *****************************************************************************/
 
+#define MAXLINE 1024
+
 #define mei_msg(_me, fmt, ARGS...) do {         \
 	if (_me->verbose)                       \
 		fprintf(stderr, fmt, ##ARGS);	\
@@ -116,14 +118,14 @@ static bool mei_init(struct mei *me, const uuid_le *guid,
 	int result;
 	struct mei_client *cl;
 	struct mei_connect_client_data data;
-	char *errmsg;
+	char errmsg[MAXLINE];
 
 	me->verbose = verbose;
 
-	errmsg = "Cannot open /dev/mei0";
+	strcpy(errmsg, "Cannot open /dev/mei0");
 	me->fd = open("/dev/mei0", O_RDWR);
 	if (me->fd == -1 && errno == ENOENT) {
-		errmsg = "Cannot open /dev/mei";
+		strcpy(errmsg, "Cannot open /dev/mei");
 		me->fd = open("/dev/mei", O_RDWR);
 	}
 	if (me->fd == -1) {
